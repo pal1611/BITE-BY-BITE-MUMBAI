@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bite by Bite - Mumbai</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bite by Bite – Mumbai: Explore Mumbai's iconic street food, cafés, and hidden culinary gems through curated food trails.">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { background-color: #fff8f0; color: #333; }
+        header { background-color: #fff1b5; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { color: #634b49; font-size: 24px; }
+        nav a { color: #634b49; text-decoration: none; margin-left: 20px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                 url("https://i.pinimg.com/1200x/ca/d3/01/cad30153b0c27e4b868c48be4f7dce53.jpg");
+                 background-size: cover; background-position: center; color: white; text-align: center; padding: 100px 20px; }
+        .hero h2 { font-size: 40px; margin-bottom: 15px; }
+        .hero p { font-size: 18px; margin-bottom: 25px; }
+        .btn { background-color: #fff1b5; color: #634b49; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .btn:hover { background-color: #c1dbe8; }
+        .about { padding: 60px 20px; text-align: center; max-width: 900px; margin: auto; }
+        .about h2 { margin-bottom: 20px; color:#634b49; }
+        .about p { line-height: 1.6; }
+        .trails { padding: 50px 20px; background-color: #e6f7ff; }
+        .trails h2 { text-align: center; margin-bottom: 40px; color: #634b49; }
+        .trail-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1100px; margin: auto; }
+        .trail-card { background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+        .trail-card h3 { margin-bottom: 10px; color: #634b49; }
+        .trail-card p { font-size: 14px; margin-bottom: 15px; }
+        footer { background-color: #43302e; color: white; text-align: center; padding: 20px; margin-top: 40px; }
+        @media (max-width: 768px) { .hero h2 { font-size: 28px; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bite by Bite - Mumbai</h1>
+        <span id="welcomeUser"></span>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="trails.html">Trails</a>
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Explore Mumbai’s Food Culture</h2>
+        <p>Discover iconic street food, cafés, and hidden gems — one bite at a time.</p>
+        <a href="trails.html" class="btn">Start Exploring</a>
+    </section>
+
+    <section class="about">
+        <h2>About Bite by Bite</h2>
+        <p>
+            Bite by Bite – Mumbai is a web-based food itinerary platform that helps users
+            explore Mumbai’s diverse food culture through curated area-wise and time-based
+            food trails. From street food in Dadar to seaside cafés in Bandra,
+            plan your complete food journey across the city.
+        </p>
+    </section>
+
+    <section class="trails">
+        <h2>Popular Food Trails</h2>
+        <div class="trail-container">
+            <div class="trail-card">
+                <h3>Bandra Trail</h3>
+                <p>Explore trendy cafés, street shawarmas and dessert hotspots.</p>
+                <a href="#" class="btn">View Trail</a>
+            </div>
+            <div class="trail-card">
+                <h3>Dadar Trail</h3>
+                <p>Authentic Maharashtrian snacks and iconic street food stops.</p>
+                <a href="#" class="btn">View Trail</a>
+            </div>
+            <div class="trail-card">
+                <h3>Colaba Trail</h3>
+                <p>Heritage cafés and legendary Mumbai eateries.</p>
+                <a href="#" class="btn">View Trail</a>
+            </div>
+            <div class="trail-card">
+                <h3>Juhu Trail</h3>
+                <p>Beachside bites and classic Mumbai chaat experiences.</p>
+                <a href="#" class="btn">View Trail</a>
+            </div>
+            <div class="trail-card">
+                <h3>Thane Trail</h3>
+                <p>Street food and lakeside eateries.</p>
+                <a href="trail-details.html?id=thane" class="btn">View Trail</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Bite by Bite - Mumbai | Created by Shreya Sakala, Gayatri Bedekar & Palak Sanklecha</p>
+    </footer>
+
+   
+    <script>
+
+        function logout() 
+        {
+            sessionStorage.removeItem("user");
+            alert("Logged out successfully");
+            window.location.href = "login.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const user = sessionStorage.getItem("user");
+
+            if(user)
+            {
+                document.querySelectorAll("nav a[href='login.html'], nav a[href='register.html']").forEach(el => el.style.display = 'none');
+            } 
+            else 
+            {
+
+                document.querySelector("nav a[href='#'][onclick='logout()']").style.display = 'none';
+            }
+
+        });
+        let user = JSON.parse(sessionStorage.getItem("user"));
+
+        if(user)
+        {
+            document.getElementById("welcomeUser").innerText = "Hi, " + user.name;
+        }
+    </script>
+
+</body>
+</html>
+

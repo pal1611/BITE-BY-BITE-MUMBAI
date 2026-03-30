@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Food Spot - Bite by Bite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #fff8f0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+}
+
+header {
+    background: #fff1b5;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+header h1 { color: #634b49; font-size: 24px; }
+nav a { margin-left: 20px; text-decoration: none; color: #634b49; font-weight: bold; }
+nav a:hover { text-decoration: underline; }
+.user-display { font-weight: bold; color: #634b49; position: absolute; left: 50%; transform: translateX(-50%); }
+
+/* SPOT HERO */
+.spot-hero {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+.spot-hero-placeholder {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, #fff1b5, #c1dbe8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+}
+
+/* MAIN LAYOUT */
+.spot-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* TOP SECTION */
+.spot-header {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+.spot-name {
+    font-size: 28px;
+    color: #634b49;
+    margin-bottom: 8px;
+}
+.spot-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.badge-veg    { background: #e6f9e6; color: #2e7d32; border: 1px solid #a5d6a7; }
+.badge-nonveg { background: #fdecea; color: #b71c1c; border: 1px solid #ef9a9a; }
+.badge-both   { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+.badge-area   { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+.badge-cost   { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+.spot-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #555;
+}
+
+/* INFO GRID */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+.info-card h3 {
+    color: #634b49;
+    font-size: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fff1b5;
+}
+.dish-list { list-style: none; }
+.dish-list li {
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 0.5px solid #f0e8e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dish-list li:last-child { border-bottom: none; }
+.dish-dot { width: 8px; height: 8px; border-radius: 50%; background: #634b49; flex-shrink: 0; }
+.timing-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 5px 0;
+    border-bottom: 0.5px solid #f0e8e0;
+}
+.timing-row:last-child { border-bottom: none; }
+.timing-label { color: #888; }
+.timing-val { color: #333; font-weight: bold; }
+.open-badge { color: #2e7d32; font-weight: bold; }
+.closed-badge { color: #b71c1c; font-weight: bold; }
+
+/* MAP */
+.map-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+.map-section h3 {
+    color: #634b49;
+    font-size: 15px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fff1b5;
+}
+.map-section iframe {
+    width: 100%;
+    height: 280px;
+    border: none;
+    border-radius: 8px;
+}
+
+/* REVIEWS */
+.reviews-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+.reviews-section h3 {
+    color: #634b49;
+    font-size: 15px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fff1b5;
+}
+.avg-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 14px;
+    background: #fff8f0;
+    border-radius: 8px;
+}
+.avg-num { font-size: 36px; font-weight: bold; color: #634b49; }
+.avg-stars { color: #f5a623; font-size: 22px; letter-spacing: 2px; }
+.avg-count { font-size: 13px; color: #888; }
+
+/* WRITE REVIEW */
+.write-review { margin-bottom: 24px; }
+.write-review h4 { font-size: 14px; color: #634b49; margin-bottom: 10px; }
+.star-rating-input span {
+    font-size: 28px;
+    cursor: pointer;
+    color: #ccc;
+    margin-right: 4px;
+    transition: color 0.1s;
+}
+.review-input {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+}
+.review-input:focus { outline: none; border-color: #634b49; }
+.submit-btn {
+    margin-top: 10px;
+    padding: 10px 24px;
+    background: #fff1b5;
+    color: #634b49;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+.submit-btn:hover { background: #c1dbe8; }
+#reviewError { color: red; font-size: 13px; margin-top: 6px; }
+
+/* REVIEW CARDS */
+.review-card {
+    border: 0.5px solid #e8ddd5;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+.review-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.reviewer-name { font-weight: bold; font-size: 14px; color: #634b49; }
+.review-stars { color: #f5a623; font-size: 16px; }
+.review-date { font-size: 12px; color: #aaa; }
+.review-text { font-size: 14px; color: #555; line-height: 1.6; }
+.no-reviews { font-size: 14px; color: #aaa; font-style: italic; }
+
+footer {
+    background: #43302e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+footer p { margin: 0; color: white; }
+
+@media (max-width: 600px) {
+    .info-grid { grid-template-columns: 1fr; }
+    header { padding: 15px 20px; }
+    .spot-name { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<script>
+  if(!sessionStorage.getItem("user")){
+      alert("Please login first!");
+      window.location.href = "login.html";
+  }
+</script>
+
+<header>
+  <h1>Bite by Bite - Mumbai</h1>
+  <span class="user-display" id="userDisplay"></span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="trails.html">Trails</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </nav>
+</header>
+
+<!-- Hero image -->
+<div id="heroArea"></div>
+
+<div class="spot-container">
+
+  <!-- Spot header -->
+  <div class="spot-header">
+    <div class="spot-name" id="spotName">Loading...</div>
+    <div class="spot-meta" id="spotMeta"></div>
+    <div class="spot-desc" id="spotDesc"></div>
+  </div>
+
+  <!-- Info grid -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>🍽️ Must-Try Dishes</h3>
+      <ul class="dish-list" id="dishList"></ul>
+    </div>
+    <div class="info-card">
+      <h3>🕐 Timings</h3>
+      <div id="timingInfo"></div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-section">
+    <h3>📍 Location</h3>
+    <div id="mapArea"></div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="reviews-section">
+    <h3>⭐ Reviews</h3>
+    <div class="avg-rating" id="avgRating"></div>
+
+    <div class="write-review">
+      <h4>Write a Review</h4>
+      <div class="star-rating-input" id="starInput">
+        <span onclick="setRating(1)">★</span>
+        <span onclick="setRating(2)">★</span>
+        <span onclick="setRating(3)">★</span>
+        <span onclick="setRating(4)">★</span>
+        <span onclick="setRating(5)">★</span>
+      </div>
+      <textarea class="review-input" id="reviewText" placeholder="Share your experience..."></textarea>
+      <div id="reviewError"></div>
+      <button class="submit-btn" onclick="submitReview()">Post Review</button>
+    </div>
+
+    <div id="reviewsList"></div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 Bite by Bite - Mumbai | Created by Shreya Sakala, Gayatri Bedekar & Palak Sanklecha</p>
+</footer>
+
+<script>
+// ─── SPOT DATA ───────────────────────────────────────────────────────────────
+const spotsData = {
+  "elco": {
+    name: "Elco Pani Puri Centre",
+    area: "Bandra",
+    trail: "bandra",
+    desc: "One of Mumbai's most iconic pani puri stalls, loved by generations. Situated on Hill Road, Elco is known for its perfectly spiced pani and crispy puris.",
+    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=900&q=80",
+    type: "both",
+    priceRange: "₹50 – ₹150",
+    dishes: ["Pani Puri", "Sev Puri", "Dahi Puri", "Bhel Puri"],
+    timing: { open: "11:00 AM", close: "11:00 PM", days: "Mon – Sun" },
+    mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.2!2d72.8361!3d19.0543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8c3b2b2b2b3%3A0x1!2sElco+Pani+Puri!5e0!3m2!1sen!2sin!4v1"
+  },
+  "aaswad": {
+    name: "Aaswad Restaurant",
+    area: "Dadar",
+    trail: "dadar",
+    desc: "A legendary Maharashtrian restaurant in Dadar serving authentic home-style food since 1971. Famous for its misal pav and sabudana khichdi.",
+    image: "https://images.unsplash.com/photo-1567337710282-00832b415979?w=900&q=80",
+    type: "veg",
+    priceRange: "₹80 – ₹300",
+    dishes: ["Misal Pav", "Sabudana Khichdi", "Puran Poli", "Ukdiche Modak"],
+    timing: { open: "7:00 AM", close: "10:30 PM", days: "Mon – Sun" },
+    mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.9!2d72.8436!3d19.0176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cf3b2b2b2b3%3A0x1!2sAaswad+Restaurant!5e0!3m2!1sen!2sin!4v1"
+  },
+  "leopold": {
+    name: "Leopold Cafe",
+    area: "Colaba",
+    trail: "colaba",
+    desc: "One of Mumbai's oldest and most iconic cafés, established in 1871. A landmark in Colaba Causeway, beloved by locals and tourists alike.",
+    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=900&q=80",
+    type: "both",
+    priceRange: "₹300 – ₹800",
+    dishes: ["Chicken Schnitzel", "Mumbai Sandwich", "Cold Coffee", "Fish & Chips"],
+    timing: { open: "8:00 AM", close: "12:00 AM", days: "Mon – Sun" },
+    mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.2!2d72.8311!3d18.9229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7d1e2b2b2b2b3%3A0x1!2sLeopold+Cafe!5e0!3m2!1sen!2sin!4v1"
+  },
+  "juhu-beach-chaat": {
+    name: "Juhu Beach Chaat Stalls",
+    area: "Juhu",
+    trail: "juhu",
+    desc: "The famous chaat stalls lining Juhu Beach are a Mumbai institution. Best enjoyed at sunset with the sea breeze and sound of waves.",
+    image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=900&q=80",
+    type: "both",
+    priceRange: "₹30 – ₹100",
+    dishes: ["Bhel Puri", "Ragda Pattice", "Pav Bhaji", "Corn on the Cob"],
+    timing: { open: "10:00 AM", close: "11:00 PM", days: "Mon – Sun" },
+    mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.5!2d72.8267!3d19.0948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9b2b2b2b2b3%3A0x1!2sJuhu+Beach!5e0!3m2!1sen!2sin!4v1"
+  }
+};
+
+// Also merge any admin-added spots from localStorage
+const adminSpots = JSON.parse(localStorage.getItem("spots")) || {};
+const allSpots = { ...spotsData, ...adminSpots };
+
+// ─── URL PARAM ────────────────────────────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const spotId = params.get("id");
+const spot = allSpots[spotId];
+
+// ─── USER ─────────────────────────────────────────────────────────────────────
+const userData = JSON.parse(sessionStorage.getItem("user"));
+document.getElementById("userDisplay").innerText = userData ? `Hello, ${userData.name}` : "";
+
+function logout(){
+    sessionStorage.removeItem("user");
+    alert("Logged out successfully");
+    window.location.href = "login.html";
+}
+
+// ─── RENDER SPOT ──────────────────────────────────────────────────────────────
+if(!spot){
+    document.getElementById("spotName").innerText = "Spot not found";
+    document.getElementById("spotDesc").innerText = "This food spot does not exist or may have been removed.";
+} else {
+    // Hero
+    const heroArea = document.getElementById("heroArea");
+    if(spot.image){
+        heroArea.innerHTML = `<img class="spot-hero" src="${spot.image}" alt="${spot.name}" onerror="this.parentElement.innerHTML='<div class=spot-hero-placeholder>🍴</div>'">`;
+    } else {
+        heroArea.innerHTML = `<div class="spot-hero-placeholder">🍴</div>`;
+    }
+
+    // Name & meta
+    document.getElementById("spotName").innerText = spot.name;
+
+    const typeLabels = { veg: "🟢 Veg", nonveg: "🔴 Non-Veg", both: "🟡 Veg & Non-Veg" };
+    const typeClass  = { veg: "badge-veg", nonveg: "badge-nonveg", both: "badge-both" };
+    document.getElementById("spotMeta").innerHTML = `
+        <span class="badge ${typeClass[spot.type] || 'badge-both'}">${typeLabels[spot.type] || spot.type}</span>
+        <span class="badge badge-area">📍 ${spot.area}</span>
+        <span class="badge badge-cost">💰 ${spot.priceRange}</span>
+    `;
+    document.getElementById("spotDesc").innerText = spot.desc;
+
+    // Dishes
+    const dishList = document.getElementById("dishList");
+    dishList.innerHTML = spot.dishes.map(d =>
+        `<li><span class="dish-dot"></span>${d}</li>`
+    ).join("");
+
+    // Timings
+    const now = new Date();
+    const currentHour = now.getHours() * 60 + now.getMinutes();
+    function timeToMins(t){
+        const [time, period] = t.split(" ");
+        let [h, m] = time.split(":").map(Number);
+        if(period === "PM" && h !== 12) h += 12;
+        if(period === "AM" && h === 12) h = 0;
+        return h * 60 + m;
+    }
+    const openMins  = timeToMins(spot.timing.open);
+    const closeMins = timeToMins(spot.timing.close);
+    const isOpen = currentHour >= openMins && currentHour < closeMins;
+
+    document.getElementById("timingInfo").innerHTML = `
+        <div class="timing-row"><span class="timing-label">Days</span><span class="timing-val">${spot.timing.days}</span></div>
+        <div class="timing-row"><span class="timing-label">Opens</span><span class="timing-val">${spot.timing.open}</span></div>
+        <div class="timing-row"><span class="timing-label">Closes</span><span class="timing-val">${spot.timing.close}</span></div>
+        <div class="timing-row"><span class="timing-label">Status</span><span class="${isOpen ? 'open-badge' : 'closed-badge'}">${isOpen ? '● Open Now' : '● Closed Now'}</span></div>
+    `;
+
+    // Map
+    document.getElementById("mapArea").innerHTML = spot.mapSrc
+        ? `<iframe src="${spot.mapSrc}" allowfullscreen loading="lazy"></iframe>`
+        : `<p style="color:#aaa;font-size:14px;">Map not available for this spot.</p>`;
+
+    // Reviews
+    loadReviews();
+}
+
+// ─── RATING ───────────────────────────────────────────────────────────────────
+let selectedRating = 0;
+function setRating(r){
+    selectedRating = r;
+    document.querySelectorAll(".star-rating-input span").forEach((s, i) => {
+        s.style.color = i < r ? "#f5a623" : "#ccc";
+    });
+}
+
+// ─── REVIEWS ─────────────────────────────────────────────────────────────────
+function loadReviews(){
+    const key = "reviews_" + spotId;
+    const reviews = JSON.parse(localStorage.getItem(key)) || [];
+    const container = document.getElementById("reviewsList");
+    const avgBox = document.getElementById("avgRating");
+
+    if(reviews.length === 0){
+        avgBox.innerHTML = `<span class="no-reviews">No ratings yet — be the first!</span>`;
+        container.innerHTML = `<p class="no-reviews">No reviews yet. Share your experience!</p>`;
+        return;
+    }
+
+    const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+    const stars = "★".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg));
+    avgBox.innerHTML = `
+        <span class="avg-num">${avg}</span>
+        <div>
+            <div class="avg-stars">${stars}</div>
+            <div class="avg-count">${reviews.length} review${reviews.length > 1 ? "s" : ""}</div>
+        </div>
+    `;
+
+    container.innerHTML = reviews.slice().reverse().map(r => `
+        <div class="review-card">
+            <div class="review-top">
+                <span class="reviewer-name">${r.name}</span>
+                <span class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
+            </div>
+            <div class="review-date">${r.date}</div>
+            <div class="review-text">${r.text}</div>
+        </div>
+    `).join("");
+}
+
+function submitReview(){
+    const errorEl = document.getElementById("reviewError");
+    errorEl.innerText = "";
+    const text = document.getElementById("reviewText").value.trim();
+
+    if(selectedRating === 0){
+        errorEl.innerText = "Please select a star rating.";
+        return;
+    }
+    if(!text){
+        errorEl.innerText = "Please write something before posting.";
+        return;
+    }
+
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const key = "reviews_" + spotId;
+    const reviews = JSON.parse(localStorage.getItem(key)) || [];
+
+    reviews.push({
+        name: user ? user.name : "Anonymous",
+        rating: selectedRating,
+        text: text,
+        date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" })
+    });
+
+    localStorage.setItem(key, JSON.stringify(reviews));
+    document.getElementById("reviewText").value = "";
+    setRating(0);
+    selectedRating = 0;
+    loadReviews();
+}
+</script>
+
+</body>
+</html>
+

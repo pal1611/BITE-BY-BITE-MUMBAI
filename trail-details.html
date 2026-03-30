@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trail Details - Bite by Bite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background:#fff8f0; font-family: Arial, Helvetica, sans-serif; color: #333; }
+
+header {
+    background:#fff1b5;
+    padding:15px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position: relative;
+    min-height: 60px;
+}
+header h1 { color:#634b49; }
+nav a { margin-left:20px; text-decoration:none; color:#634b49; font-weight:bold; }
+nav a:hover { text-decoration: underline; }
+.user-display { font-weight:bold; color:#634b49; position:absolute; left:50%; transform:translateX(-50%); }
+
+.search-box { text-align:center; margin:20px; }
+.search-box input {
+    padding:12px 20px; width:80%; max-width:500px;
+    border-radius:25px; border:1px solid #ccc;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1); font-size:16px; transition:0.3s;
+}
+.search-box input:focus { border-color:#634b49; outline:none; }
+
+.trail-details { max-width:800px; margin:auto; padding:40px 20px; }
+
+/* TRAIL INFO CARD */
+.trail-info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+}
+.trail-info-card h2 { color:#634b49; font-size: 26px; margin-bottom: 10px; }
+.trail-info-card p  { font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 14px; }
+.trail-meta { display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-badge {
+    padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold;
+    background: #fff1b5; color: #634b49; border: 1px solid #e0d070;
+}
+
+/* STAR RATING (trail-level) */
+.trail-rating-section { margin-top: 16px; }
+.trail-rating-section p { font-size: 14px; color: #888; margin-bottom: 6px; }
+.star-rating span {
+    font-size: 26px; cursor: pointer; color: #ccc; margin-right: 4px; transition: color 0.1s;
+}
+
+/* FOOD SPOTS SECTION */
+.spots-heading {
+    font-size: 20px;
+    color: #634b49;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fff1b5;
+}
+
+.spot-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+    display: flex;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.spot-card:hover { transform: translateY(-2px); }
+.spot-card-img {
+    width: 130px;
+    min-height: 120px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.spot-card-img-placeholder {
+    width: 130px;
+    min-height: 120px;
+    background: linear-gradient(135deg, #fff1b5, #c1dbe8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+}
+.spot-card-body { padding: 16px; flex: 1; }
+.spot-card-body h3 { color: #634b49; font-size: 16px; margin-bottom: 6px; }
+.spot-card-body p  { font-size: 13px; color: #666; margin-bottom: 10px; line-height: 1.5; }
+.spot-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tag {
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
+}
+.tag-veg    { background: #e6f9e6; color: #2e7d32; }
+.tag-nonveg { background: #fdecea; color: #b71c1c; }
+.tag-both   { background: #fff8e1; color: #f57f17; }
+.tag-cost   { background: #f3e5f5; color: #6a1b9a; }
+
+.btn {
+    background:#fff1b5; color:#634b49; padding:8px 18px;
+    border-radius:5px; text-decoration:none; font-weight:bold;
+    display:inline-block; font-size:13px;
+}
+.btn:hover { background:#c1dbe8; }
+
+.no-spots { font-size: 14px; color: #aaa; font-style: italic; padding: 20px 0; }
+
+footer { background:#43302e; color:white; text-align:center; padding:20px; margin-top:40px; }
+footer p { margin: 0; color: white; }
+
+@media (max-width: 600px) {
+    header { padding: 15px 20px; }
+    .spot-card { flex-direction: column; }
+    .spot-card-img, .spot-card-img-placeholder { width: 100%; height: 160px; }
+}
+</style>
+</head>
+<body>
+
+<script>
+  if(!sessionStorage.getItem("user")){
+      alert("Please login first!");
+      window.location.href = "login.html";
+  }
+</script>
+
+<header>
+  <h1>Bite by Bite - Mumbai</h1>
+  <span class="user-display" id="userDisplay"></span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="trails.html">Trails</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </nav>
+</header>
+
+<div class="search-box">
+  <input type="text" id="searchFood" placeholder="Search food spots..." onkeyup="searchFoodSpots()">
+</div>
+
+<section class="trail-details" id="trailContainer">
+
+  <!-- Trail info -->
+  <div class="trail-info-card" id="trailInfoCard">
+    <h2 id="trailName">Loading...</h2>
+    <p  id="trailDesc"></p>
+    <div class="trail-meta" id="trailMeta"></div>
+    <div class="trail-rating-section">
+      <p>Rate this trail:</p>
+      <div class="star-rating" id="starRating">
+        <span onclick="setRating(1)">★</span>
+        <span onclick="setRating(2)">★</span>
+        <span onclick="setRating(3)">★</span>
+        <span onclick="setRating(4)">★</span>
+        <span onclick="setRating(5)">★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food spots -->
+  <div class="spots-heading">Food Spots on this Trail</div>
+  <div id="spotsList"></div>
+
+</section>
+
+<footer>
+  <p>© 2026 Bite by Bite - Mumbai | Created by Shreya Sakala, Gayatri Bedekar & Palak Sanklecha</p>
+</footer>
+
+<script>
+// ─── TRAIL DATA ───────────────────────────────────────────────────────────────
+const trailData = {
+  bandra:  { name: "Bandra Trail",  area: "Bandra",  desc: "Trendy cafés, street shawarmas and dessert hotspots in the Queen of Suburbs.",  cost: "₹100 – ₹500", duration: "2–3 hrs" },
+  dadar:   { name: "Dadar Trail",   area: "Dadar",   desc: "Authentic Maharashtrian snacks and iconic street food stops in the heart of Mumbai.", cost: "₹80 – ₹300",  duration: "2 hrs" },
+  colaba:  { name: "Colaba Trail",  area: "Colaba",  desc: "Heritage cafés and legendary Mumbai eateries in the city's historic south.",        cost: "₹200 – ₹800", duration: "2–3 hrs" },
+  juhu:    { name: "Juhu Trail",    area: "Juhu",    desc: "Beachside bites and classic Mumbai chaat experiences by the sea.",                  cost: "₹50 – ₹200",  duration: "1–2 hrs" },
+  thane:   { name: "Thane Trail",   area: "Thane",   desc: "Street food and lakeside eateries in the City of Lakes.",                          cost: "₹60 – ₹250",  duration: "2 hrs" },
+  morning: { name: "Morning Breakfast Trail", area: "Various", desc: "Start your day with iconic breakfast spots across Mumbai.",               cost: "₹60 – ₹200",  duration: "1–2 hrs" },
+  night:   { name: "Night Street Food Trail", area: "Various", desc: "Explore Mumbai's vibrant late-night food culture.",                       cost: "₹50 – ₹200",  duration: "2–3 hrs" },
+};
+
+// ─── SPOTS DATA ───────────────────────────────────────────────────────────────
+const spotsData = {
+  "elco":             { name: "Elco Pani Puri Centre",    trail: "bandra",  area: "Bandra",  type: "both", priceRange: "₹50–₹150",   desc: "Mumbai's most iconic pani puri stall on Hill Road.",      image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&q=70" },
+  "aaswad":           { name: "Aaswad Restaurant",        trail: "dadar",   area: "Dadar",   type: "veg",  priceRange: "₹80–₹300",   desc: "Legendary Maharashtrian restaurant serving since 1971.",  image: "https://images.unsplash.com/photo-1567337710282-00832b415979?w=300&q=70" },
+  "leopold":          { name: "Leopold Cafe",             trail: "colaba",  area: "Colaba",  type: "both", priceRange: "₹300–₹800",  desc: "One of Mumbai's oldest and most iconic cafés (est. 1871).", image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300&q=70" },
+  "juhu-beach-chaat": { name: "Juhu Beach Chaat Stalls",  trail: "juhu",    area: "Juhu",    type: "both", priceRange: "₹30–₹100",   desc: "Famous chaat stalls lining Juhu Beach — best at sunset.", image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=300&q=70" },
+};
+
+const adminSpots = JSON.parse(localStorage.getItem("spots")) || {};
+const allSpots = { ...spotsData, ...adminSpots };
+
+// ─── URL PARAM ────────────────────────────────────────────────────────────────
+const params  = new URLSearchParams(window.location.search);
+const trailId = params.get("id");
+const trail   = trailData[trailId];
+
+// ─── USER ─────────────────────────────────────────────────────────────────────
+const userData = JSON.parse(sessionStorage.getItem("user"));
+document.getElementById("userDisplay").innerText = userData ? `Hello, ${userData.name}` : "";
+
+function logout(){
+    sessionStorage.removeItem("user");
+    alert("Logged out successfully");
+    window.location.href = "login.html";
+}
+
+// ─── RENDER TRAIL INFO ────────────────────────────────────────────────────────
+if(trail){
+    document.title = trail.name + " - Bite by Bite";
+    document.getElementById("trailName").innerText = trail.name;
+    document.getElementById("trailDesc").innerText = trail.desc;
+    document.getElementById("trailMeta").innerHTML = `
+        <span class="meta-badge">📍 ${trail.area}</span>
+        <span class="meta-badge">💰 ${trail.cost}</span>
+        <span class="meta-badge">⏱ ${trail.duration}</span>
+    `;
+
+    // Restore saved rating
+    const savedRating = localStorage.getItem("trail_rating_" + trailId);
+    if(savedRating) highlightStars(parseInt(savedRating));
+} else {
+    document.getElementById("trailName").innerText = "Trail not found";
+    document.getElementById("trailDesc").innerText = "This trail does not exist.";
+}
+
+// ─── RENDER FOOD SPOTS ────────────────────────────────────────────────────────
+const spotsList = document.getElementById("spotsList");
+const trailSpots = Object.entries(allSpots).filter(([id, s]) => s.trail === trailId);
+
+if(trailSpots.length === 0){
+    spotsList.innerHTML = `<p class="no-spots">No food spots added for this trail yet.</p>`;
+} else {
+    const typeLabels = { veg: "🟢 Veg", nonveg: "🔴 Non-Veg", both: "🟡 Veg & Non-Veg" };
+    const typeClass  = { veg: "tag-veg", nonveg: "tag-nonveg", both: "tag-both" };
+    spotsList.innerHTML = trailSpots.map(([id, s]) => `
+        <div class="spot-card">
+            ${s.image
+                ? `<img class="spot-card-img" src="${s.image}" alt="${s.name}" onerror="this.outerHTML='<div class=spot-card-img-placeholder>🍴</div>'">`
+                : `<div class="spot-card-img-placeholder">🍴</div>`}
+            <div class="spot-card-body">
+                <h3>${s.name}</h3>
+                <p>${s.desc}</p>
+                <div class="spot-tags">
+                    <span class="tag ${typeClass[s.type] || 'tag-both'}">${typeLabels[s.type] || s.type}</span>
+                    <span class="tag tag-cost">💰 ${s.priceRange}</span>
+                </div>
+                <a href="spot-details.html?id=${id}" class="btn">View Spot →</a>
+            </div>
+        </div>
+    `).join("");
+}
+
+// ─── TRAIL RATING ─────────────────────────────────────────────────────────────
+function highlightStars(r){
+    document.querySelectorAll("#starRating span").forEach((s, i) => {
+        s.style.color = i < r ? "#f5a623" : "#ccc";
+    });
+}
+function setRating(r){
+    highlightStars(r);
+    localStorage.setItem("trail_rating_" + trailId, r);
+}
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+function searchFoodSpots(){
+    const input = document.getElementById("searchFood").value.toLowerCase();
+    document.querySelectorAll(".spot-card").forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(input) ? "flex" : "none";
+    });
+}
+</script>
+
+</body>
+</html>
+
