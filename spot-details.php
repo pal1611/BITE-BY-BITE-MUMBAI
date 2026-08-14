@@ -365,7 +365,7 @@ $cinCheck->close();
       <form method="POST" enctype="multipart/form-data">
         <div class="star-input" id="starInput">
           <?php for ($i = 1; $i <= 5; $i++): ?>
-            <span onclick="setRating(<?= $i ?>)">★</span>
+            <span>★</span>
           <?php endfor; ?>
         </div>
         <input type="hidden" name="rating" id="ratingInput" value="0">
@@ -540,15 +540,34 @@ function shareSpot(){
     navigator.clipboard.writeText(window.location.href)
         .then(() => showToast('Link copied to clipboard!'));
 }
-</script>
-function setRating(r){
+
+// ── STAR RATING ──
+let selectedRating = 0;
+
+function setRating(r) {
     selectedRating = r;
     document.getElementById('ratingInput').value = r;
-    document.querySelectorAll('#starInput span').forEach((s,i) => s.style.color = i < r ? '#f5a623' : '#ccc');
+    document.querySelectorAll('#starInput span').forEach((s, i) => {
+        s.style.color = i < r ? '#f5a623' : '#ccc';
+    });
 }
-document.querySelectorAll('#starInput span').forEach((s,i) => {
-    s.addEventListener('mouseover', () => document.querySelectorAll('#starInput span').forEach((x,j) => x.style.color = j <= i ? '#f5a623' : '#ccc'));
-    s.addEventListener('mouseout',  () => document.querySelectorAll('#starInput span').forEach((x,j) => x.style.color = j < selectedRating ? '#f5a623' : '#ccc'));
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#starInput span').forEach((s, i) => {
+        s.addEventListener('mouseover', function() {
+            document.querySelectorAll('#starInput span').forEach((x, j) => {
+                x.style.color = j <= i ? '#f5a623' : '#ccc';
+            });
+        });
+        s.addEventListener('mouseout', function() {
+            document.querySelectorAll('#starInput span').forEach((x, j) => {
+                x.style.color = j < selectedRating ? '#f5a623' : '#ccc';
+            });
+        });
+        s.addEventListener('click', function() {
+            setRating(i + 1);
+        });
+    });
 });
 </script>
 </body>
